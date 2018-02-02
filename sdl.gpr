@@ -1,0 +1,35 @@
+library project SDL is
+
+   for Languages use ("ada");
+   for Library_Name use "home_sdl.ada";
+   for Source_Dirs use ("src");
+   for Object_Dir use "obj";
+   for Library_Dir use "lib";
+   for Library_Kind use "static";
+
+   package Compiler is
+      for Switches ("ada") use ("-gnata", "-gnato", "-fstack-check", "-gnat12", "-gnatwa", "-s");
+   end Compiler;
+
+   package Linker is
+
+      --Dynamic link:
+      --for Linker_Options use ("-Llib\SDL2-2.0.5\i686-w64-mingw32\lib", "-lSDL2main", "-lSDL2");
+      --for Linker_Options use ("-Llib\SDL2-2.0.5\i686-w64-mingw32\lib", "-lmingw32", "-lSDL2main", "-lSDL2", "-mwindows");
+
+      --Static link:
+      for Linker_Options use ("-Llib\SDL2-2.0.7\i686-w64-mingw32\lib", "-lmingw32", "-lSDL2main", "-lSDL2", "-mwindows", "-Wl,--no-undefined", "-lm", "-ldinput8", "-ldxguid", "-ldxerr8", "-luser32", "-lgdi32", "-lwinmm", "-limm32", "-lole32", "-loleaut32", "-lshell32", "-lversion", "-luuid", "-static-libgcc");
+
+   end Linker;
+
+   package Builder is
+      --for Default_Switches ("ada") use ("-s", "-gnatQ");
+   end Builder;
+
+
+   package Ide is
+      for Vcs_Kind use "Git";
+   end Ide;
+
+end SDL;
+
