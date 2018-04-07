@@ -1,11 +1,10 @@
-with "..\GL\gl.gpr";
-with "sdl.gpr";
+with "../../sdl.gpr";
 
-project SDL_GLTest is
+project Multiple_Test is
 
-   for Source_Dirs use ("src_gltest");
+   for Source_Dirs use ("src");
    for Object_Dir use "obj";
-   for Main use ("test_gl.adb");
+   for Main use ("test_gui.adb", "test_message_box.adb", "test_plotter.adb", "test_window.adb", "test_texture.adb", "test_opengl_context.adb", "test_renderer.adb");
 
    package Compiler is
       for Switches ("ada") use ("-gnata", "-gnato", "-fstack-check", "-gnat12", "-gnatwa", "-g");
@@ -19,9 +18,5 @@ project SDL_GLTest is
       for Switches ("ada") use ("-g");
    end Linker;
 
-   package Ide is
-      for Vcs_Kind use "Git";
-   end Ide;
-
-end SDL_GLTest;
+end Multiple_Test;
 
