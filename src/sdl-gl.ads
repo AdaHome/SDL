@@ -1,5 +1,6 @@
 with System;
 with SDL.Windows;
+with Interfaces.C;
 
 package SDL.GL is
 
@@ -9,13 +10,34 @@ package SDL.GL is
 
    use type SDL.Windows.SDL_Window;
 
-   --SDL_GLContext SDL_GL_CreateContext(SDL_Window* window)
    function Create_Context (Window : SDL.Windows.SDL_Window) return SDL_GL_Context with
      Import        => True,
      Convention    => C,
      External_Name => "SDL_GL_CreateContext",
      Pre           => Window /= SDL.Windows.Null_SDL_Window,
      Post          => Create_Context'Result /= Null_SDL_GL_Context;
+
+
+   procedure Delete_OpenGL_Context
+     (Context : SDL_GL_Context) with
+     Import        => True,
+     Convention    => C,
+     External_Name => "SDL_GL_DeleteContext",
+     Pre           => Context /= Null_SDL_GL_Context;
+
+
+   use type Interfaces.C.size_t;
+   use type Interfaces.C.char_array;
+   use type System.Address;
+
+   function Load (Name : Interfaces.C.char_array) return System.Address with
+     Import        => True,
+     Convention    => C,
+     External_Name => "SDL_GL_GetProcAddress",
+     Pre           => Name'Length > 2,
+     Post          => Load'Result /= System.Null_Address;
+
+   function Load (Name : String) return System.Address;
 
 private
 

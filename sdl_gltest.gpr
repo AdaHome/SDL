@@ -1,5 +1,4 @@
-with "..\Home_Utility\home_utility.gpr";
-with "..\Ada-GL\gl.gpr";
+with "..\GL\gl.gpr";
 with "sdl.gpr";
 
 project SDL_GLTest is
