@@ -1,7 +1,8 @@
-with GL.C.Initializations;
+with GL.C_Initializations;
 
 with SDL.GL;
 with SDL.Errors;
+with SDL.Windows;
 
 with System;
 
@@ -10,7 +11,7 @@ with Ada.Exceptions;
 with Ada.Strings.Fixed;
 with System.Address_Image;
 
-procedure Basic_GL_Loader is
+function Basic_GL_Loader (Window : SDL.Windows.SDL_Window) return SDL.GL.SDL_GL_Context is
 
    function Loader (Name : String) return System.Address is
       use System;
@@ -36,8 +37,11 @@ procedure Basic_GL_Loader is
 	 return Null_Address;
    end Loader;
 
+   use SDL.GL;
+
+   Context : constant SDL_GL_Context := Create_Context (Window);
+
 begin
-
-    GL.C.Initializations.Initialize (Loader'Unrestricted_Access);
-
+   GL.C_Initializations.Initialize (Loader'Unrestricted_Access);
+   return Context;
 end Basic_GL_Loader;

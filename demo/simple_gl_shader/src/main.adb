@@ -12,19 +12,28 @@ with Basic_GL_Loader;
 
 with Ada.Text_IO;
 
-
 procedure Main is
 
    procedure Shader_Stuff (Filename : String) is
       use GL.Programs;
       use GL.Shaders;
       use GL.Shader_Files;
-      P : Program := Create_Empty;
-      SF : Shader := Create_Empty (Fragment_Stage);
-      SV : Shader := Create_Empty (Vertex_Stage);
+      use Ada.Text_IO;
+      P : constant Program := Create_Empty;
+      S1 : constant Shader := Create_Empty (Fragment_Stage);
+      S2 : constant Shader := Create_Empty (Vertex_Stage);
    begin
-      Set_Source_File (SF, "shader.glfs");
-      Set_Source_File (SV, "shader.glvs");
+      Set_Source_File (S1, Filename & ".glfs");
+      Set_Source_File (S2, Filename & ".glvs");
+      Compile (S1);
+      Compile (S2);
+      Put_Line ("S1: " & Get_Compile_Log (S1));
+      Put_Line ("S2: " & Get_Compile_Log (S2));
+      Attach (P, S1);
+      Attach (P, S2);
+      Link (P);
+      Put_Line (Get_Link_Log (P));
+      Set_Current (P);
    end Shader_Stuff;
 
 
@@ -46,8 +55,7 @@ begin
       Window := Windows.Create ("Title", 0, 0, 500, 500, True, True, 0, Shown or Resizable or OpenGL);
       Renderer := Renderers.Create (Window, Software);
 
-      Context := SDL.GL.Create_Context (Window);
-      Basic_GL_Loader;
+      Context := Basic_GL_Loader (Window);
 
       Shader_Stuff ("shader");
 
