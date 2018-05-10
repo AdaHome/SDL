@@ -10,7 +10,7 @@ package SDL.Errors is
      Convention    => C,
      External_Name => "SDL_GetError";
 
-   function Get return String;
+   function Get_String return String;
 
    procedure Clear_Error with
      Import        => True,

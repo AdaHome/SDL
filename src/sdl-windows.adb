@@ -16,7 +16,7 @@ package body SDL.Windows is
    begin
       SDL.Errors.Clear_Error;
       Window := Create_Unsafe (C_Title, X, Y, W, H, Flags);
-      Assert (Window /= Null_SDL_Window, "Create() : " & Errors.Get);
+      Assert (Window /= Null_SDL_Window, "Create() : " & Errors.Get_String);
       return Window;
    end Create;
 
@@ -59,7 +59,7 @@ package body SDL.Windows is
       R : Integer;
    begin
       R := Update_Surface (Window);
-      Assert (R = 0, Errors.Get);
+      Assert (R = 0, Errors.Get_String);
    end;
 
 

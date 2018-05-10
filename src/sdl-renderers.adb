@@ -8,7 +8,7 @@ package body SDL.Renderers is
       Renderer : SDL_Renderer;
    begin
       Renderer := Create_Unsafe (Window, -1, Flags);
-      Assert (Renderer /= Null_Renderer, "SDL_CreateRenderer. " & Errors.Get);
+      Assert (Renderer /= Null_Renderer, "SDL_CreateRenderer. " & Errors.Get_String);
       return Renderer;
    end;
 

@@ -11,7 +11,7 @@ package body SDL.Textures is
       Result : SDL_Result;
    begin
       Result := Set_Render_Target (Renderer, Texture);
-      Assert (Result = 0, "Create() : " & Errors.Get);
+      Assert (Result = 0, "Create() : " & Errors.Get_String);
    end;
 
 
@@ -22,7 +22,7 @@ package body SDL.Textures is
       Result : SDL_Result;
    begin
       Result := Render_Copy (Renderer, Texture, null, null);
-      Assert (Result = 0, "Update() : " & Errors.Get);
+      Assert (Result = 0, "Update() : " & Errors.Get_String);
    end;
 
 
@@ -34,7 +34,7 @@ package body SDL.Textures is
       Result : SDL_Result;
    begin
       Result := Update (Texture, null, Data, Pitch);
-      Assert (Result = 0, "Update() : " & Errors.Get);
+      Assert (Result = 0, "Update() : " & Errors.Get_String);
    end;
 
 
@@ -47,7 +47,7 @@ package body SDL.Textures is
       Result : SDL_Result;
    begin
       Result := Update (Texture, Format, Data, Pitch);
-      Assert (Result = 0, "Update() : " & Errors.Get);
+      Assert (Result = 0, "Update() : " & Errors.Get_String);
    end;
 
 

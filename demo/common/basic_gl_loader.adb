@@ -32,7 +32,7 @@ function Basic_GL_Loader (Window : SDL.Windows.SDL_Window) return SDL.GL.SDL_GL_
 	 Put (" : ");
 	 Put (Exception_Information (E));
 	 Put (" : ");
-	 Put (SDL.Errors.Get);
+	 Put (SDL.Errors.Get_String);
 	 New_Line;
 	 return Null_Address;
    end Loader;

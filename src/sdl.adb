@@ -8,7 +8,7 @@ package body SDL is
       Result : Initialize_Result;
    begin
       Result := Initialize (Flags);
-      Assert (Result = 0, "SDL_Init failed. " & Errors.Get);
+      Assert (Result = 0, "SDL_Init failed. " & Errors.Get_String);
    end Initialize;
 
 end SDL;

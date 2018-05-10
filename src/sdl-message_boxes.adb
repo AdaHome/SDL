@@ -9,7 +9,7 @@ package body SDL.Message_Boxes is
       Result : Show_Result;
    begin
       Result := Show (Item, Identity);
-      Assert (Result = 0, "SDL_ShowMessageBox failed. " & Errors.Get);
+      Assert (Result = 0, "SDL_ShowMessageBox failed. " & Errors.Get_String);
    end;
 
 end SDL.Message_Boxes;

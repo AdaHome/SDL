@@ -1,8 +1,12 @@
-#version 330 core
-layout(location = 0) in vec3 vertexPosition_modelspace;
+#version 450 core
 
-void main()
+layout (location = 0) in vec4 pos;
+layout (location = 1) in vec4 col;
+
+out vec4 vs_col;
+
+void main(void)
 {
-	gl_Position.xyz = vertexPosition_modelspace;
-	gl_Position.w = 1.0;
+	gl_Position = pos;
+	vs_col = col;
 }

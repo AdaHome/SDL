@@ -3,60 +3,88 @@ with SDL.Windows;
 with SDL.GL;
 
 with GL.Programs;
-with GL.Shaders;
-with GL.Shader_Files;
 with GL.C;
-with GL.Buffers;
+
 with GL.DSA_Buffers;
+with GL.Vertex_Array_Objects;
+with GL.Drawings;
 
 with Basic_Event_Controller;
 with Basic_GL_Loader;
+with Basic_Shader_Loader;
 
 with Ada.Text_IO;
+use Ada.Text_IO;
+
+with Interfaces.C;
+with SDL.Errors;
+with GL.Errors;
+
 
 procedure Main is
 
-   procedure Shader_Stuff (Filename : String) is
-      use GL.Programs;
-      use GL.Shaders;
-      use GL.Shader_Files;
-      use Ada.Text_IO;
-      P : constant Program := Create_Empty;
-      S1 : constant Shader := Create_Empty (Fragment_Stage);
-      S2 : constant Shader := Create_Empty (Vertex_Stage);
-   begin
-      Set_Source_File (S1, Filename & ".glfs");
-      Set_Source_File (S2, Filename & ".glvs");
-      Compile (S1);
-      Compile (S2);
-      Put_Line ("S1: " & Get_Compile_Log (S1));
-      Put_Line ("S2: " & Get_Compile_Log (S2));
-      Attach (P, S1);
-      Attach (P, S2);
-      Link (P);
-      Put_Line ("P: " & Get_Link_Log (P));
-      Set_Current (P);
-   end Shader_Stuff;
+   type FV4 is array (1 .. 4) of GL.C.GLfloat;
 
-   procedure Load_Vertex is
+
+   type Vertex is record
+      Pos : FV4;
+      Col : FV4;
+   end record with Pack;
+
+   procedure Load_Vertex (P : GL.Programs.Program) is
       use GL.C;
-      use GL.Buffers;
       use GL.DSA_Buffers;
+      use GL.Vertex_Array_Objects;
       use type GLfloat;
-      Data : array (Integer range <>) of GLfloat := (0.0, 0.5, 0.5, -0.5, -0.5, -0.5);
-      B : DSA_Buffer := Create_Buffer;
+      use type GLsizei;
+
+      Data : array (1 .. 4) of Vertex;
+
+      Buffer : constant DSA_Buffer := Create_Buffer;
+      Attribute : constant Vertex_Array_Object := Create_Attribute;
+      CA_Pos : constant Component_Attribute := Get_Attribute_By_Name (GL.Programs.Identity (P), "pos");
+      CA_Col : constant Component_Attribute := Get_Attribute_By_Name (GL.Programs.Identity (P), "col");
    begin
-      null;
-      --glBindBuffer(GL_ARRAY_BUFFER, vbo);
-      --glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+      Data (1).Pos := (0.0, 0.0, 0.0, 1.0);
+      Data (2).Pos := (1.0, 0.0, 0.0, 1.0);
+      Data (3).Pos := (1.0, 1.0, 0.0, 1.0);
+      Data (1).Col := (1.0, 0.0, 0.0, 1.0);
+      Data (2).Col := (0.0, 1.0, 0.0, 1.0);
+      Data (3).Col := (0.0, 0.0, 1.0, 1.0);
+      Put_Line_Fancy (CA_Pos);
+      Put_Line_Fancy (CA_Col);
+
+      Set_Attribute_Memory_Layout (Attribute, CA_Pos, 3, Float_Type, False, 0);
+      Set_Attribute_Memory_Layout (Attribute, CA_Col, 4, Float_Type, False, 4*4);
+
+      VertexArrayAttribBinding (Attribute, CA_Pos, 0);
+      VertexArrayAttribBinding (Attribute, CA_Col, 0);
+
+      Set_Attribute_Enable (Attribute, CA_Pos);
+      Set_Attribute_Enable (Attribute, CA_Col);
+
+      Named_Buffer_Storage (Buffer, Data'Size / 8, Data'Address, 0);
+      --Named_Buffer_Storage (Buffer, Data'Size / 8, Data'Address, GL_DYNAMIC_STORAGE_BIT);
+      Bind_Buffer_Vertex (Attribute, 0, GLuint (Buffer), 0, Vertex'Size / 8); -- 4 dim and 4 floats
+
+      Bind (Attribute);
    end Load_Vertex;
 
-
-
+   R : Interfaces.C.int;
+   P : GL.Programs.Program;
 
 begin
 
    SDL.Initialize (SDL.Initialize_Flags.Video);
+
+   Put_Line ("##");
+   Put_Line ("SDL_GL_CONTEXT_PROFILE_MASK" & SDL.GL.SDL_GL_CONTEXT_PROFILE_MASK'Enum_Rep'Img);
+   Put_Line ("SDL_GL_CONTEXT_MAJOR_VERSION" & SDL.GL.SDL_GL_CONTEXT_MAJOR_VERSION'Enum_Rep'Img);
+   Put_Line ("SDL_GL_CONTEXT_MINOR_VERSION" & SDL.GL.SDL_GL_CONTEXT_MINOR_VERSION'Enum_Rep'Img);
+
+   R := SDL.GL.Set (SDL.GL.SDL_GL_CONTEXT_PROFILE_MASK, SDL.GL.SDL_GL_CONTEXT_PROFILE_CORE);
+   R := SDL.GL.Set (SDL.GL.SDL_GL_CONTEXT_MAJOR_VERSION, 4);
+   R := SDL.GL.Set (SDL.GL.SDL_GL_CONTEXT_MINOR_VERSION, 5);
 
    declare
       use SDL;
@@ -70,10 +98,15 @@ begin
 
       Context := Basic_GL_Loader (Window);
 
-      Shader_Stuff ("shader");
+      P := Basic_Shader_Loader ("shader");
+      Load_Vertex (P);
 
       while Should_Run loop
-         Basic_Event_Controller (Should_Run);
+	 Basic_Event_Controller (Should_Run);
+	 GL.C.glClearColor (0.1, 0.1, 0.2, 1.0);
+	 GL.Drawings.Clear (GL.Drawings.Color_Plane);
+	 GL.Drawings.Draw (GL.Drawings.Triangles_Mode, 0, 3);
+	 SDL.GL.Swap (Window);
          delay 0.01;
       end loop;
 
@@ -82,5 +115,13 @@ begin
    end;
 
    SDL.Quit;
+
+exception
+
+   when E : others =>
+      Put_Line ("SDL exception");
+      Put_Line (SDL.Errors.Get_String);
+      Put_Line ("GL exception");
+      Put_Line (GL.Errors.Global_Error'Img);
 
 end Main;

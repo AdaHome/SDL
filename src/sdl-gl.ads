@@ -26,6 +26,11 @@ package SDL.GL is
      Pre           => Context /= Null_SDL_GL_Context;
 
 
+   procedure Swap (Window : SDL.Windows.SDL_Window) with
+     Import        => True,
+     Convention    => C,
+     External_Name => "SDL_GL_SwapWindow";
+
    use type Interfaces.C.size_t;
    use type Interfaces.C.char_array;
    use type System.Address;
@@ -38,6 +43,66 @@ package SDL.GL is
      Post          => Load'Result /= System.Null_Address;
 
    function Load (Name : String) return System.Address;
+
+   type SDL_GLAttr is
+     (
+      SDL_GL_RED_SIZE,
+      SDL_GL_GREEN_SIZE,
+      SDL_GL_BLUE_SIZE,
+      SDL_GL_ALPHA_SIZE,
+      SDL_GL_BUFFER_SIZE,
+      SDL_GL_DOUBLEBUFFER,
+      SDL_GL_DEPTH_SIZE,
+      SDL_GL_STENCIL_SIZE,
+      SDL_GL_ACCUM_RED_SIZE,
+      SDL_GL_ACCUM_GREEN_SIZE,
+      SDL_GL_ACCUM_BLUE_SIZE,
+      SDL_GL_ACCUM_ALPHA_SIZE,
+      SDL_GL_STEREO,
+      SDL_GL_MULTISAMPLEBUFFERS,
+      SDL_GL_MULTISAMPLESAMPLES,
+      SDL_GL_ACCELERATED_VISUAL,
+      SDL_GL_RETAINED_BACKING,
+      SDL_GL_CONTEXT_MAJOR_VERSION,
+      SDL_GL_CONTEXT_MINOR_VERSION,
+      SDL_GL_CONTEXT_EGL,
+      SDL_GL_CONTEXT_FLAGS,
+      SDL_GL_CONTEXT_PROFILE_MASK,
+      SDL_GL_SHARE_WITH_CURRENT_CONTEXT,
+      SDL_GL_FRAMEBUFFER_SRGB_CAPABLE,
+      SDL_GL_CONTEXT_RELEASE_BEHAVIOR,
+      SDL_GL_CONTEXT_RESET_NOTIFICATION,
+      SDL_GL_CONTEXT_NO_ERROR
+     );
+
+   type SDL_GLProfile is
+     (
+      SDL_GL_CONTEXT_PROFILE_CORE,
+      SDL_GL_CONTEXT_PROFILE_COMPATIBILITY,
+      SDL_GL_CONTEXT_PROFILE_ES
+     );
+
+   for SDL_GLProfile use
+     (
+      SDL_GL_CONTEXT_PROFILE_CORE           => 16#0001#,
+      SDL_GL_CONTEXT_PROFILE_COMPATIBILITY  => 16#0002#,
+      SDL_GL_CONTEXT_PROFILE_ES             => 16#0004#
+     );
+
+   use type Interfaces.C.int;
+
+   function Set (Name : SDL_GLAttr; Value : SDL_GLProfile) return Interfaces.C.int with
+     Import        => True,
+     Convention    => C,
+     External_Name => "SDL_GL_SetAttribute",
+     Post          => Set'Result = 0;
+
+   function Set (Name : SDL_GLAttr; Value : Interfaces.C.int) return Interfaces.C.int with
+     Import        => True,
+     Convention    => C,
+     External_Name => "SDL_GL_SetAttribute",
+     Post          => Set'Result = 0;
+
 
 private
 
